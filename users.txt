@@ -1,0 +1,4 @@
+1|Ana Flores|Derecho Penal|1234567890|ana@example.com
+2|Diego Torres|Derecho Civil|0987654321|diego@example.com
+3|Gemma Luque|Derecho Administrativo|1122334455|gemma@example.com
+4|Katherine Pino|Derecho Penal|2233445566|katherine@example.com
