@@ -1,0 +1,154 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.menu {
+    width: 250px;
+    background-color: #002f6c;
+    color: white;
+    position: fixed;
+    height: 100%;
+    padding-top: 20px;
+    transition: margin-left 0.3s;
+}
+
+.menu h2 {
+    text-align: center;
+    color: white;
+}
+
+.menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu ul li {
+    padding: 10px;
+    text-align: center;
+}
+
+.menu ul li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.menu ul li ul {
+    display: none;
+    list-style: none;
+    padding: 0;
+}
+
+.menu ul li:hover ul {
+    display: block;
+}
+
+.menu ul li ul li {
+    padding: 10px;
+    background-color: #003a7f;
+}
+
+.menu-toggle {
+    background-color: #002f6c;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 20px;
+    text-align: center;
+    z-index: 1000;
+    border-radius: 5px;
+}
+
+.main {
+    margin-left: 250px;
+    transition: margin-left 0.3s;
+    padding: 20px;
+}
+
+h1, h2 {
+    color: #002f6c;
+    text-align: left;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 10px 0;
+    color: black;
+}
+
+ul li button {
+    margin-left: 20px;
+    background-color: #002f6c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: right;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.column {
+    width: 45%;
+}
+
+.form-container {
+    width: 45%;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+}
+.form-container h2 {
+    text-align: center;
+}
+input, select, textarea {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #002f6c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .main {
+        margin-left: 0;
+    }
+    
+    .menu {
+        display: none;
+    }
+
+    .content {
+        flex-direction: column;
+    }
+
+    .column, .form-container {
+        width: 100%;
+    }
+}
