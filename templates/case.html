@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Caso: {{ case.title }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="menu">
+        <h2>Menú</h2>
+        <ul>
+            <li><a href="#">Historial de Casos</a>
+                <ul>
+                    <li><a href="/">Casos Activos</a></li>
+                    <li><a href="#">Casos Resueltos</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Configuración</a>
+                <ul>
+                    <li><a href="/users">Usuarios</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="main">
+        <h1>Caso: {{ case.title }}</h1>
+        <h2>Información del Cliente</h2>
+        <ul>
+            <li>Nombres:</li>
+            <li>Apellidos:</li>
+            <li>Tipo de documento:</li>
+            <li>Nro de Documento:</li>
+            <li>Nro de Contacto:</li>
+            <li>Correo Electrónico:</li>
+        </ul>
+        <button>Editar</button>
+        <h2>Documentos a analizar</h2>
+        <ul>
+            <li>Evidencias.pdf</li>
+            <li>Declaración.pdf</li>
+            <li>Evidencia_foto.png</li>
+            <li>Testigo_audio.mp3</li>
+        </ul>
+        <form action="/upload_file" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".pdf,.txt" required>
+            <button type="submit">Subir Archivo</button>
+        </form>
+        <button>Generar Reporte</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración de Usuarios</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script>
+        function toggleMenu() {
+            var menu = document.getElementById('sidebar');
+            if (menu.style.display === 'block' || menu.style.display === '') {
+                menu.style.display = 'none';
+                document.getElementById('main-content').style.marginLeft = '0';
+            } else {
+                menu.style.display = 'block';
+                document.getElementById('main-content').style.marginLeft = '200px';
+            }
+        }
+
+        function addTag(select, container) {
+            let value = select.value;
+            if (value && !Array.from(container.children).some(child => child.textContent === value)) {
+                let span = document.createElement('span');
+                span.className = 'tag';
+                span.textContent = value;
+                container.appendChild(span);
+                select.value = "";
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="sidebar" class="menu">
+        <h2>Menú</h2>
+        <ul>
+            <li><a href="#">Historial de Casos</a>
+                <ul>
+                    <li><a href="/">Casos Activos</a></li>
+                    <li><a href="#">Casos Resueltos</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Configuración</a>
+                <ul>
+                    <li><a href="/users">Usuarios</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div id="main-content" class="main">
+        <button class="menu-toggle" onclick="toggleMenu()">&#9776;</button>
+        <div class="content">
+            <div class="column">
+                <h1>Configuración</h1>
+                <h2>Usuarios</h2>
+                <ul>
+                    {% for user in users1 %}
+                        <li>{{ loop.index }} {{ user.name }} <button class="edit-button">Editar</button></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="form-container">
+                <h2>Nuevo Usuario</h2>
+                <form action="/add_user" method="post">
+                    <input type="text" name="name" placeholder="Nombre Completo" required>
+                    <select name="law_area" onchange="addTag(this, document.getElementById('user_law_area_tags'))">
+                        <option value="" disabled selected>Área del Derecho</option>
+                        <option value="Derecho Penal">Derecho Penal</option>
+                        <option value="Derecho Civil">Derecho Civil</option>
+                        <option value="Derecho Administrativo">Derecho Administrativo</option>
+                    </select>
+                    <div id="user_law_area_tags" class="tags-container"></div>
+                    <input type="text" name="contact" placeholder="Número de Contacto">
+                    <input type="email" name="email" placeholder="Correo Electrónico">
+                    <button type="submit">Agregar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
