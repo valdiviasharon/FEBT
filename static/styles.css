@@ -113,9 +113,11 @@ ul li button {
     padding: 20px;
     border-radius: 10px;
 }
+
 .form-container h2 {
     text-align: center;
 }
+
 input, select, textarea {
     width: calc(100% - 22px);
     padding: 10px;
@@ -134,6 +136,36 @@ button {
     border-radius: 5px;
     text-align: center;
 }
+button[type="delete"] {
+    background-color: #002f6c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Estilos para el formulario de subida de archivos */
+form {
+    margin-top: 20px;
+}
+
+input[type="file"] {
+    padding: 10px;
+    margin-top: 10px;
+}
+
+button[type="submit"] {
+    background-color: #002f6c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 10px;
+}
 
 @media (max-width: 768px) {
     .main {
@@ -151,4 +183,24 @@ button {
     .column, .form-container {
         width: 100%;
     }
+}
+
+/* Estilos para las etiquetas */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.tag {
+    background-color: #002f6c;
+    color: white;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.tag:hover {
+    background-color: #003a7f;
 }
