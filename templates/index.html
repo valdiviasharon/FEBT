@@ -5,24 +5,27 @@
     <title>Historial de Casos</title>
     <link rel="stylesheet" href="/static/styles.css">
     <script>
-        function toggleMenu() {
-            var menu = document.getElementById('sidebar');
-            if (menu.style.display === 'block' || menu.style.display === '') {
-                menu.style.display = 'none';
-                document.getElementById('main-content').style.marginLeft = '0';
-            } else {
-                menu.style.display = 'block';
-                document.getElementById('main-content').style.marginLeft = '250px';
-            }
-        }
-
-        function addTag(select, container) {
+        function addTag(select, container, hiddenInput) {
             let value = select.value;
             if (value && !Array.from(container.children).some(child => child.textContent === value)) {
                 let span = document.createElement('span');
                 span.className = 'tag';
                 span.textContent = value;
                 container.appendChild(span);
+
+                // Actualizar el valor del campo oculto
+                let currentTags = hiddenInput.value ? hiddenInput.value.split(',') : [];
+                currentTags.push(value);
+                hiddenInput.value = currentTags.join(',');
+
+                // Añadir funcionalidad para eliminar etiqueta
+                span.onclick = function() {
+                    container.removeChild(span);
+                    currentTags = currentTags.filter(tag => tag !== value);
+                    hiddenInput.value = currentTags.join(',');
+                };
+
+                select.value = "";
             }
         }
     </script>
@@ -52,7 +55,12 @@
                 <h2>Casos Activos</h2>
                 <ul>
                     {% for case in casos %}
-                        <li>{{ case.id }}. {{ case.title }} <button class="edit-button">Editar</button></li>
+                        <li>{{ case.id }}. Caso: {{ case.title }} 
+                            <button class="edit-button" onclick="window.location.href='/edit_case/{{ case.id }}'">Editar</button>
+                            <form action="/delete_case/{{ case.id }}" method="post" style="display:inline;">
+                                <button type="delete" class="delete-button">Eliminar</button>
+                            </form>
+                        </li>
                     {% else %}
                         <li>No hay casos activos</li>
                     {% endfor %}
@@ -62,15 +70,22 @@
                 <h2>Nuevo Caso</h2>
                 <form action="/add_case" method="post">
                     <input type="text" name="title" placeholder="Título del Caso" required>
-                    <select name="law_area" onchange="addTag(this, document.getElementById('law_area_tags'))">
+                    <select name="law_area_select" onchange="addTag(this, document.getElementById('law_area_tags'), document.getElementById('law_area'))">
                         <option value="" disabled selected>Área del Derecho</option>
                         <option value="Derecho Penal">Derecho Penal</option>
                         <option value="Derecho Civil">Derecho Civil</option>
                         <option value="Derecho Administrativo">Derecho Administrativo</option>
                     </select>
                     <div id="law_area_tags" class="tags-container"></div>
+                    <input type="hidden" name="law_area" id="law_area" required>
                     <textarea name="description" placeholder="Descripción General del Caso" rows="4"></textarea>
-                    <select name="responsible">
+                    <input type="text" name="client_name" placeholder="Nombre del Cliente" required>
+                    <input type="text" name="client_surname" placeholder="Apellidos del Cliente" required>
+                    <input type="text" name="document_type" placeholder="Tipo de Documento" required>
+                    <input type="text" name="document_number" placeholder="Nro de Documento" required>
+                    <input type="text" name="contact_number" placeholder="Nro de Contacto" required>
+                    <input type="email" name="email" placeholder="Correo Electrónico" required>
+                    <select name="responsible" required>
                         <option value="" disabled selected>Responsable del Caso</option>
                         {% for user in users %}
                             <option value="{{ user.name }}">{{ user.name }}</option>

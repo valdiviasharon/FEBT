@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuario</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script>
+        function addTag(select, container, hiddenInput) {
+            let value = select.value;
+            if (value && !Array.from(container.children).some(child => child.textContent === value)) {
+                let span = document.createElement('span');
+                span.className = 'tag';
+                span.textContent = value;
+                container.appendChild(span);
+
+                // Actualizar el valor del campo oculto
+                let currentTags = hiddenInput.value ? hiddenInput.value.split(',') : [];
+                currentTags.push(value);
+                hiddenInput.value = currentTags.join(',');
+
+                // Añadir funcionalidad para eliminar etiqueta
+                span.onclick = function() {
+                    container.removeChild(span);
+                    currentTags = currentTags.filter(tag => tag !== value);
+                    hiddenInput.value = currentTags.join(',');
+                };
+
+                select.value = "";
+            }
+        }
+
+        function loadTags(container, hiddenInput) {
+            let tags = hiddenInput.value.split(',');
+            tags.forEach(tag => {
+                if (tag) {
+                    let span = document.createElement('span');
+                    span.className = 'tag';
+                    span.textContent = tag;
+                    container.appendChild(span);
+
+                    span.onclick = function() {
+                        container.removeChild(span);
+                        let currentTags = hiddenInput.value.split(',').filter(t => t !== tag);
+                        hiddenInput.value = currentTags.join(',');
+                    };
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTags(document.getElementById('user_law_area_tags'), document.getElementById('user_law_area'));
+        });
+    </script>
+</head>
+<body>
+    <div class="main">
+        <h1>Editar Usuario</h1>
+        <form action="/edit_user/{{ user_id }}" method="post">
+            <input type="text" name="name" placeholder="Nombre Completo" value="{{ user.name }}" required>
+            <select name="law_area_select" onchange="addTag(this, document.getElementById('user_law_area_tags'), document.getElementById('user_law_area'))">
+                <option value="" disabled selected>Área del Derecho</option>
+                <option value="Derecho Penal">Derecho Penal</option>
+                <option value="Derecho Civil">Derecho Civil</option>
+                <option value="Derecho Administrativo">Derecho Administrativo</option>
+            </select>
+            <div id="user_law_area_tags" class="tags-container"></div>
+            <input type="hidden" name="law_area" id="user_law_area" value="{{ ','.join(user.law_area) }}" required>
+            <input type="text" name="contact" placeholder="Número de Contacto" value="{{ user.contact }}">
+            <input type="email" name="email" placeholder="Correo Electrónico" value="{{ user.email }}">
+            <button type="submit">Actualizar</button>
+        </form>
+    </div>
+</body>
+</html>

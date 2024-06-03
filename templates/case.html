@@ -26,22 +26,22 @@
         <h1>Caso: {{ case.title }}</h1>
         <h2>Información del Cliente</h2>
         <ul>
-            <li>Nombres:</li>
-            <li>Apellidos:</li>
-            <li>Tipo de documento:</li>
-            <li>Nro de Documento:</li>
-            <li>Nro de Contacto:</li>
-            <li>Correo Electrónico:</li>
+            <li>Nombres: {{ case.client_name }}</li>
+            <li>Apellidos: {{ case.client_surname }}</li>
+            <li>Tipo de documento: {{ case.document_type }}</li>
+            <li>Nro de Documento: {{ case.document_number }}</li>
+            <li>Nro de Contacto: {{ case.contact_number }}</li>
+            <li>Correo Electrónico: {{ case.email }}</li>
         </ul>
-        <button>Editar</button>
+        <a href="/edit_case/{{ case.id }}"><button>Editar</button></a>
         <h2>Documentos a analizar</h2>
         <ul>
-            <li>Evidencias.pdf</li>
-            <li>Declaración.pdf</li>
-            <li>Evidencia_foto.png</li>
-            <li>Testigo_audio.mp3</li>
+            {% for document in case.documents %}
+                <li><a href="{{ url_for('static', filename='uploads/' ~ document) }}" target="_blank">{{ document }}</a></li>
+            {% endfor %}
         </ul>
         <form action="/upload_file" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="case_id" value="{{ case.id }}">
             <input type="file" name="file" accept=".pdf,.txt" required>
             <button type="submit">Subir Archivo</button>
         </form>

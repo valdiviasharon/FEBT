@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Caso: {{ case.title }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script>
+        function addTag(select, container, hiddenInput) {
+            let value = select.value;
+            if (value && !Array.from(container.children).some(child => child.textContent === value)) {
+                let span = document.createElement('span');
+                span.className = 'tag';
+                span.textContent = value;
+                container.appendChild(span);
+
+                // Actualizar el valor del campo oculto
+                let currentTags = hiddenInput.value ? hiddenInput.value.split(',') : [];
+                currentTags.push(value);
+                hiddenInput.value = currentTags.join(',');
+
+                // Añadir funcionalidad para eliminar etiqueta
+                span.onclick = function() {
+                    container.removeChild(span);
+                    currentTags = currentTags.filter(tag => tag !== value);
+                    hiddenInput.value = currentTags.join(',');
+                };
+
+                select.value = "";
+            }
+        }
+
+        function loadTags(container, hiddenInput) {
+            let tags = hiddenInput.value.split(',');
+            tags.forEach(tag => {
+                if (tag) {
+                    let span = document.createElement('span');
+                    span.className = 'tag';
+                    span.textContent = tag;
+                    container.appendChild(span);
+
+                    span.onclick = function() {
+                        container.removeChild(span);
+                        let currentTags = hiddenInput.value.split(',').filter(t => t !== tag);
+                        hiddenInput.value = currentTags.join(',');
+                    };
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTags(document.getElementById('case_law_area_tags'), document.getElementById('case_law_area'));
+        });
+    </script>
+</head>
+<body>
+    <div class="menu">
+        <h2>Menú</h2>
+        <ul>
+            <li><a href="#">Historial de Casos</a>
+                <ul>
+                    <li><a href="/">Casos Activos</a></li>
+                    <li><a href="#">Casos Resueltos</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Configuración</a>
+                <ul>
+                    <li><a href="/users">Usuarios</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="main">
+        <h1>Editar Caso: {{ case.title }}</h1>
+        <form action="/edit_case/{{ case.id }}" method="post" enctype="multipart/form-data">
+            <h2>Información del Cliente</h2>
+            <input type="text" name="title" placeholder="Título del Caso" value="{{ case.title }}" required>
+            <input type="text" name="client_name" placeholder="Nombre del Cliente" value="{{ case.client_name }}" required>
+            <input type="text" name="client_surname" placeholder="Apellidos del Cliente" value="{{ case.client_surname }}" required>
+            <input type="text" name="document_type" placeholder="Tipo de Documento" value="{{ case.document_type }}" required>
+            <input type="text" name="document_number" placeholder="Nro de Documento" value="{{ case.document_number }}" required>
+            <input type="text" name="contact_number" placeholder="Nro de Contacto" value="{{ case.contact_number }}" required>
+            <input type="email" name="email" placeholder="Correo Electrónico" value="{{ case.email }}" required>
+            
+            <h2>Área del Derecho</h2>
+            <select name="law_area_select" onchange="addTag(this, document.getElementById('case_law_area_tags'), document.getElementById('case_law_area'))">
+                <option value="" disabled selected>Seleccione Área del Derecho</option>
+                <option value="Derecho Penal">Derecho Penal</option>
+                <option value="Derecho Civil">Derecho Civil</option>
+                <option value="Derecho Administrativo">Derecho Administrativo</option>
+            </select>
+            <div id="case_law_area_tags" class="tags-container"></div>
+            <input type="hidden" name="law_area" id="case_law_area" value="{{ ','.join(case.law_area) }}" required>
+            
+            <h2>Descripción del Caso</h2>
+            <textarea name="description" placeholder="Descripción del Caso" rows="4" required>{{ case.description }}</textarea>
+            
+            <h2>Responsable del Caso</h2>
+            <select name="responsible" required>
+                <option value="" disabled>Seleccione Responsable</option>
+                {% for user in users %}
+                    <option value="{{ user.name }}" {% if user.name == case.responsible %}selected{% endif %}>{{ user.name }}</option>
+                {% endfor %}
+            </select>
+            
+            <h2>Documentos a analizar</h2>
+            <ul>
+                {% for document in case.documents %}
+                    <li>{{ document }}</li>
+                {% endfor %}
+            </ul>
+            <input type="file" name="new_document" accept=".pdf,.txt">
+            
+            <button type="submit">Actualizar Caso</button>
+        </form>
+    </div>
+</body>
+</html>
