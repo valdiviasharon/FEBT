@@ -1,0 +1,34 @@
+[
+    {
+        "id": 1,
+        "title": "F\u00e1brica de Golosinas",
+        "law_area": [
+            "Derecho Administrativo"
+        ],
+        "description": "caso...",
+        "responsible": "Gemma ",
+        "client_name": "Jose",
+        "client_surname": "Perez",
+        "document_type": "DNI",
+        "document_number": "12457845",
+        "contact_number": "956295874",
+        "email": "jose_perez@gmail.com",
+        "documents": []
+    },
+    {
+        "id": 3,
+        "title": "Automotriz",
+        "law_area": [
+            "Derecho Civil"
+        ],
+        "description": "caso...",
+        "responsible": "Miguel",
+        "client_name": "Ricardo",
+        "client_surname": "Jimenez",
+        "document_type": "DNI",
+        "document_number": "75488655",
+        "contact_number": "987654321",
+        "email": "ricardo_j@gmail.com",
+        "documents": []
+    }
+]

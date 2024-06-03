@@ -1,0 +1,35 @@
+[
+    {
+        "name": "Gemma ",
+        "law_area": [
+            "Derecho Civil",
+            "Derecho Administrativo"
+        ],
+        "contact": "9583666666",
+        "email": "gemma@gmail.com"
+    },
+    {
+        "name": "Khaty",
+        "law_area": [
+            "Derecho Penal"
+        ],
+        "contact": "959996666",
+        "email": "khaty@gmail.com"
+    },
+    {
+        "name": "Antuanet",
+        "law_area": [
+            "Derecho Penal"
+        ],
+        "contact": "954675488",
+        "email": "antuanet@gmail.com"
+    },
+    {
+        "name": "Miguel",
+        "law_area": [
+            "Derecho Administrativo"
+        ],
+        "contact": "945862231",
+        "email": "miguel@gmail.com"
+    }
+]
