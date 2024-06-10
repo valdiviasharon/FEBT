@@ -13,12 +13,10 @@
                 span.textContent = value;
                 container.appendChild(span);
 
-                // Actualizar el valor del campo oculto
                 let currentTags = hiddenInput.value ? hiddenInput.value.split(',') : [];
                 currentTags.push(value);
                 hiddenInput.value = currentTags.join(',');
 
-                // Añadir funcionalidad para eliminar etiqueta
                 span.onclick = function() {
                     container.removeChild(span);
                     currentTags = currentTags.filter(tag => tag !== value);
@@ -47,9 +45,51 @@
             });
         }
 
+        function removeFile(element, hiddenInput) {
+            let filename = element.parentElement.firstChild.textContent.trim();
+            let removedFiles = hiddenInput.value ? hiddenInput.value.split(',') : [];
+            removedFiles.push(filename);
+            hiddenInput.value = removedFiles.join(',');
+            element.parentElement.remove();
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            const fileList = document.getElementById('file-list');
+            for (const file of files) {
+                const listItem = document.createElement('li');
+                listItem.textContent = file.name;
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Eliminar';
+                removeButton.type = 'button';
+                removeButton.className = 'delete-button';
+                removeButton.onclick = function() {
+                    listItem.remove();
+                };
+                listItem.appendChild(removeButton);
+                fileList.appendChild(listItem);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             loadTags(document.getElementById('case_law_area_tags'), document.getElementById('case_law_area'));
+            document.getElementById('new_documents').addEventListener('change', handleFileSelect);
         });
+
+        function submitFormAndRefresh() {
+            const form = document.getElementById('case-form');
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error al subir los archivos');
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -70,48 +110,73 @@
         </ul>
     </div>
     <div class="main">
-        <h1>Editar Caso: {{ case.title }}</h1>
-        <form action="/edit_case/{{ case.id }}" method="post" enctype="multipart/form-data">
-            <h2>Información del Cliente</h2>
-            <input type="text" name="title" placeholder="Título del Caso" value="{{ case.title }}" required>
-            <input type="text" name="client_name" placeholder="Nombre del Cliente" value="{{ case.client_name }}" required>
-            <input type="text" name="client_surname" placeholder="Apellidos del Cliente" value="{{ case.client_surname }}" required>
-            <input type="text" name="document_type" placeholder="Tipo de Documento" value="{{ case.document_type }}" required>
-            <input type="text" name="document_number" placeholder="Nro de Documento" value="{{ case.document_number }}" required>
-            <input type="text" name="contact_number" placeholder="Nro de Contacto" value="{{ case.contact_number }}" required>
-            <input type="email" name="email" placeholder="Correo Electrónico" value="{{ case.email }}" required>
-            
-            <h2>Área del Derecho</h2>
-            <select name="law_area_select" onchange="addTag(this, document.getElementById('case_law_area_tags'), document.getElementById('case_law_area'))">
-                <option value="" disabled selected>Seleccione Área del Derecho</option>
-                <option value="Derecho Penal">Derecho Penal</option>
-                <option value="Derecho Civil">Derecho Civil</option>
-                <option value="Derecho Administrativo">Derecho Administrativo</option>
-            </select>
-            <div id="case_law_area_tags" class="tags-container"></div>
-            <input type="hidden" name="law_area" id="case_law_area" value="{{ ','.join(case.law_area) }}" required>
-            
-            <h2>Descripción del Caso</h2>
-            <textarea name="description" placeholder="Descripción del Caso" rows="4" required>{{ case.description }}</textarea>
-            
-            <h2>Responsable del Caso</h2>
-            <select name="responsible" required>
-                <option value="" disabled>Seleccione Responsable</option>
-                {% for user in users %}
-                    <option value="{{ user.name }}" {% if user.name == case.responsible %}selected{% endif %}>{{ user.name }}</option>
+        <div class="column left">
+            <h1>Editar Caso: {{ case.title }}</h1>
+            <form id="case-form" action="/edit_case/{{ case.id }}" method="post" enctype="multipart/form-data">
+                <h2>Información del Cliente</h2>
+                <input type="text" name="title" placeholder="Título del Caso" value="{{ case.title }}" required>
+                <input type="text" name="client_name" placeholder="Nombre del Cliente" value="{{ case.client_name }}" required>
+                <input type="text" name="client_surname" placeholder="Apellidos del Cliente" value="{{ case.client_surname }}" required>
+                <input type="text" name="document_type" placeholder="Tipo de Documento" value="{{ case.document_type }}" required>
+                <input type="text" name="document_number" placeholder="Nro de Documento" value="{{ case.document_number }}" required>
+                <input type="text" name="contact_number" placeholder="Nro de Contacto" value="{{ case.contact_number }}" required>
+                <input type="email" name="email" placeholder="Correo Electrónico" value="{{ case.email }}" required>
+                
+                <h2>Área del Derecho</h2>
+                <select name="law_area_select" onchange="addTag(this, document.getElementById('case_law_area_tags'), document.getElementById('case_law_area'))">
+                    <option value="" disabled selected>Seleccione Área del Derecho</option>
+                    <option value="Derecho Penal">Derecho Penal</option>
+                    <option value="Derecho Civil">Derecho Civil</option>
+                    <option value="Derecho Administrativo">Derecho Administrativo</option>
+                </select>
+                <div id="case_law_area_tags" class="tags-container"></div>
+                <input type="hidden" name="law_area" id="case_law_area" value="{{ ','.join(case.law_area) }}" required>
+                
+                <h2>Descripción del Caso</h2>
+                <textarea name="description" placeholder="Descripción del Caso" rows="4" required>{{ case.description }}</textarea>
+                
+                <h2>Responsable del Caso</h2>
+                <select name="responsible" required>
+                    <option value="" disabled>Seleccione Responsable</option>
+                    {% for user in users %}
+                        <option value="{{ user.name }}" {% if user.name == case.responsible %}selected{% endif %}>{{ user.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <h2>Documentos a analizar</h2>
+                <ul id="documents-list">
+                    {% for document in case.documents %}
+                        <li>{{ document }} <button type="button" class="delete-button" onclick="removeFile(this, document.getElementById('removed_files'))">Eliminar</button></li>
+                    {% endfor %}
+                </ul>
+                <input type="hidden" name="removed_files" id="removed_files" value="">
+
+                <!-- Formulario para subir archivos adicionales -->
+                <h2>Subir Documentos</h2>
+                <input type="file" name="new_documents" id="new_documents" multiple accept=".pdf,.txt">
+                <ul id="file-list"></ul>
+
+                <div class="buttons">
+                    <button type="button" onclick="submitFormAndRefresh()">Subir archivos</button>
+                    <button type="submit1">Guardar</button>
+                </div>
+            </form>
+        </div>
+        <div class="column right">
+            <h2>Chat</h2>
+            <div id="chat-container">
+                {% for message in chat %}
+                    <div class="chat-message">
+                        <strong>{{ message.user }}:</strong> {{ message.text }}
+                    </div>
                 {% endfor %}
-            </select>
-            
-            <h2>Documentos a analizar</h2>
-            <ul>
-                {% for document in case.documents %}
-                    <li>{{ document }}</li>
-                {% endfor %}
-            </ul>
-            <input type="file" name="new_document" accept=".pdf,.txt">
-            
-            <button type="submit">Actualizar Caso</button>
-        </form>
+            </div>
+            <form id="chat-form" action="/send_message" method="post">
+                <input type="hidden" name="case_id" value="{{ case.id }}">
+                <input type="text" name="message" placeholder="Escribe tu mensaje..." required>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
