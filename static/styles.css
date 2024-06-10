@@ -4,6 +4,7 @@ body {
     padding: 0;
 }
 
+/*Barrita azul de la izquierda*/
 .menu {
     width: 250px;
     background-color: #002f6c;
@@ -65,7 +66,7 @@ body {
     z-index: 1000;
     border-radius: 5px;
 }
-
+/* Estilo general */
 .main {
     margin-left: 250px;
     transition: margin-left 0.3s;
@@ -107,6 +108,7 @@ ul li button {
     width: 45%;
 }
 
+/* Formularios */
 .form-container {
     width: 45%;
     background-color: #f0f0f0;
@@ -127,6 +129,7 @@ input, select, textarea {
     box-sizing: border-box;
 }
 
+/* Botones */
 button {
     background-color: #002f6c;
     color: white;
@@ -136,6 +139,7 @@ button {
     border-radius: 5px;
     text-align: center;
 }
+
 button[type="delete"] {
     background-color: #002f6c;
     color: white;
@@ -144,6 +148,33 @@ button[type="delete"] {
     cursor: pointer;
     border-radius: 5px;
     text-align: center;
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.upload-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.delete-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
 }
 
 /* Estilos para el formulario de subida de archivos */
@@ -203,4 +234,66 @@ button[type="submit"] {
 
 .tag:hover {
     background-color: #003a7f;
+}
+
+/* Chatcito */
+#chat-container {
+    height: 400px;
+    overflow-y: scroll;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-message {
+    margin-bottom: 10px;
+}
+
+#chat-form {
+    display: flex;
+    align-items: center;
+}
+
+#chat-form input[type="text"] {
+    flex: 1;
+    margin-right: 10px;
+}
+
+/* Documentos */
+#documents-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+
+#documents-list li button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#documents-list li button:hover {
+    background-color: #d32f2f;
+}
+
+#file-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+
+#file-list li button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#file-list li button:hover {
+    background-color: #d32f2f;
 }
