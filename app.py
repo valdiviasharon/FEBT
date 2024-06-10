@@ -14,6 +14,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # Definir archivos de almacenamiento
 USERS_FILE = 'users.json'
 CASES_FILE = 'cases.json'
+CHAT_FILE = 'chat.json'
 
 # Funciones para manejar archivos
 def load_data(file_path):
@@ -29,6 +30,7 @@ def save_data(file_path, data):
 # Cargar datos
 users_db = load_data(USERS_FILE)
 cases_db = load_data(CASES_FILE)
+chat_db = load_data(CHAT_FILE)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'pdf', 'txt'}
@@ -40,15 +42,6 @@ def index():
 @app.route('/users')
 def users():
     return render_template('users.html', users1=users_db)
-
-@app.route('/case/<int:case_id>')
-def case_page(case_id):
-    case = next((case for case in cases_db if case['id'] == case_id), None)
-    if case:
-        return render_template('case.html', case=case)
-    else:
-        flash('Case not found')
-        return redirect(url_for('index'))
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
@@ -62,7 +55,10 @@ def upload_file():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        case_folder = os.path.join(app.config['UPLOAD_FOLDER'], str(case_id))
+        if not os.path.exists(case_folder):
+            os.makedirs(case_folder)
+        file.save(os.path.join(case_folder, filename))
         
         # Actualizar la lista de documentos del caso
         case = next((case for case in cases_db if case['id'] == int(case_id)), None)
@@ -71,7 +67,7 @@ def upload_file():
             save_data(CASES_FILE, cases_db)
         
         flash('File successfully uploaded')
-        return redirect(url_for('case_page', case_id=case_id))
+        return redirect(url_for('edit_case', case_id=case_id))
     else:
         flash('Allowed file types are pdf, txt')
         return redirect(request.url)
@@ -149,12 +145,25 @@ def edit_case(case_id):
             case['contact_number'] = request.form['contact_number']
             case['email'] = request.form['email']
             
-            if 'new_document' in request.files and request.files['new_document'].filename != '':
-                new_document = request.files['new_document']
-                if allowed_file(new_document.filename):
-                    filename = secure_filename(new_document.filename)
-                    new_document.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                    case['documents'].append(filename)
+            # Manejar eliminación de archivos
+            removed_files = request.form['removed_files'].split(',')
+            for filename in removed_files:
+                if filename in case['documents']:
+                    case['documents'].remove(filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], str(case_id), filename)
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+            
+            # Manejar subida de archivos
+            if 'new_documents' in request.files:
+                for file in request.files.getlist('new_documents'):
+                    if file and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        case_folder = os.path.join(app.config['UPLOAD_FOLDER'], str(case_id))
+                        if not os.path.exists(case_folder):
+                            os.makedirs(case_folder)
+                        file.save(os.path.join(case_folder, filename))
+                        case['documents'].append(filename)
             
             save_data(CASES_FILE, cases_db)
             flash('Case successfully updated')
@@ -172,6 +181,21 @@ def delete_case(case_id):
     save_data(CASES_FILE, cases_db)
     flash('Case successfully deleted')
     return redirect(url_for('index'))
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    case_id = int(request.form['case_id'])
+    message = request.form['message']
+    user = get_current_user()  # Obtener usuario actual
+    if case_id not in chat_db:
+        chat_db[case_id] = []
+    chat_db[case_id].append({'user': user, 'text': message})
+    return redirect(url_for('edit_case', case_id=case_id))
+
+# Funciones auxiliares
+def get_current_user():
+    # Lógica para obtener el usuario actual
+    return "Usuario Actual"
 
 if __name__ == "__main__":
     app.run(debug=True)
